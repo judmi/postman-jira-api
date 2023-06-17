@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "933a4f39-f552-4d8b-963f-d8a0a0fef8e6",
+		"name": "JIRA API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10313229",
+		"_collection_link": "https://www.postman.com/comfortsoft/workspace/api-testing/collection/10313229-933a4f39-f552-4d8b-963f-d8a0a0fef8e6?action=share&creator=10313229&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Create issue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var JSONdata = pm.response.json();\r",
+							"var JSONrequest = JSON.parse(pm.request.body.raw);\r",
+							"\r",
+							"pm.environment.set(\"issueId\", JSONdata.id);\r",
+							"pm.collectionVariables.set(\"IssueSummary\", JSONrequest.fields.summary);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fields\": {\r\n        \"project\": {\r\n            \"id\": \"10302\"\r\n        },\r\n        \"issuetype\": {\r\n            \"id\": \"10101\"\r\n        },\r\n        \"summary\": \"New22222\",\r\n        \"components\": [],\r\n        \"fixVersions\": [],\r\n        \"priority\": {\r\n            \"id\": \"3\",\r\n            \"name\": \"Medium\",\r\n            \"iconUrl\": \"https://testbase.atlassian.net/images/icons/priorities/medium.svg\"\r\n        },\r\n        \"labels\": []\r\n    },\r\n    \"update\": {},\r\n    \"watchers\": [\r\n        \"62137d8a758035006833851c\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/rest/api/3/issue?updateHistory=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"3",
+						"issue"
+					],
+					"query": [
+						{
+							"key": "updateHistory",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetIssueById",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let JSONdata = pm.response.json()\r",
+							"pm.test(`Check issue summary equals '${pm.collectionVariables.get('IssueSummary')}'`, function(){\r",
+							"    pm.expect(JSONdata.fields.summary).to.be.eql(pm.collectionVariables.get('IssueSummary'));\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/rest/api/3/issue/{{issueId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"rest",
+						"api",
+						"3",
+						"issue",
+						"{{issueId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{password}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{login}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test('Response time less than 2000', function(){",
+					"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+					"})",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "login",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "IssueSummary",
+			"value": ""
+		}
+	]
+}
